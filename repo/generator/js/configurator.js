@@ -88,18 +88,17 @@ var Configurator = new Class({
     saveConfig: function()
     {
         var pass = this;
-        alert();
         // Make the button load
         $('save_button').addClass( 'loading' );
         $('save_button').innerHTML = '&nbsp;';
         $('save_button').href = 'javascript:void(0)';
-        alert('1');
 //        var table = $('.nav-tabs li .active').val();  //获取ul下li class为active的值
         
 //        document.getElementsByTagName("active").id = 'active';
         var table =document.getElementsByClassName("active")[0].innerText;
-//        var table =1;
         alert(table);
+//        var table =1;
+        
         this.tables.each( function( t )
         {
             // Get table name
@@ -138,7 +137,7 @@ var Configurator = new Class({
 
         // db_name,base_url variables are generated in the 'views/configurator.php' template's header
 //        new Request.JSON({ url: "index.php/configurator/save/" + db_name, onSuccess: function( rsp, txt ){
-        	new Request.JSON({ url: "index.php/configurator/save/" + db_name+"/table/"+table, onSuccess: function( rsp, txt ){
+        	new Request.JSON({ url: "index.php/configurator/save/" + db_name+"/"+table, onSuccess: function( rsp, txt ){
             if( rsp !== null )
             {
                 if( rsp.success == 'yes' )

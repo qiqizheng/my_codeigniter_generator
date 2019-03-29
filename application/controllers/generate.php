@@ -66,12 +66,13 @@ class Generate extends CI_Controller  {
 		
 		// Get the folder permissions
 		$folder_info = $this->folder_model->check_permissions( $manifest['output_directory'] );
+		$data_sheet_arr = $this->db->query("select sf_table from sf_config")->row_array();
+		if(!empty($data_sheet_arr)) $data_sheet  = $data_sheet_arr['sf_table'];
 		
 		// Validate the folder permissions
 		if ( $folder_info['is_writeable'] == true ) 
 		{
 			$tables = $this->db->list_tables();
-// 			print_r($tables);die;
 			$path_templates	= 'templates';
 			/**
 			 *	Create input / output paths for the model_iscaffold.
@@ -100,7 +101,6 @@ class Generate extends CI_Controller  {
 				}
 			}
 			
-			echo 333;
 // 			print_r($data_path);die;
 // 			print_r($manifest);die;
 			/**
@@ -120,16 +120,16 @@ class Generate extends CI_Controller  {
 			{
 				dircopy( $dir, $path_output );
 			}
-			die("66333");
 			/**
 			 *	This is wehere the code generation is invoked
 			 *	Each table is processed here
 			 */
 			foreach( $tables as $table )
 			{
+				if($table != $data_sheet) continue;
 				if( $table !== 'sf_config' ) $this->model_iscaffold->Process_Table( $table, $data_path, $code_template, $manifest );
 			}
-
+			$this->db->query("delete from sf_config");
 			echo '{ "result": "success" }';
 		}
 		

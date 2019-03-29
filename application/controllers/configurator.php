@@ -140,7 +140,7 @@ class Configurator extends CI_Controller {
 		//连接数据库
         $this->idb->connect( $database );
 		//将库中的表都保存
-        $res = $this->conf_model->save( json_decode( $this->input->post('json_data') ) );
+        $res = $this->conf_model->save( json_decode( $this->input->post('json_data') ), $table );
 
         if( $res === true )
         {

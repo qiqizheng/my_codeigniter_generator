@@ -411,12 +411,17 @@ class Conf_Model extends CI_Model {
 
     /**
      *  Save the posted values to the sf_config table
+     *  增加只处理该表字段 $dataTable  by qi 2019-03-29
      */         
-    function save( $data )
+    function save( $data , $dataTable="")
     {
         $success = true;
+        $this->addTable($dataTable);
+        //添加表 用于保存时确认 qi by 2019-03-29
+        return $success;
         foreach( $data as $table => $fields )
         {
+        	if($dataTable != $table) continue;  //只对传递的表做处理
             $c = 0;
             foreach( $fields as $field => $config )
             {
@@ -424,6 +429,7 @@ class Conf_Model extends CI_Model {
                 $this->db->where( 'sf_field', ( $config->field_id ) ? $config->field_id : $field );
 
                 $data = array(
+                		'sf_table'    => $dataTable,
                     'sf_type'    => $config->type,
                     'sf_desc'    => $config->desc,
                     'sf_related' => $config->related_id . '|' . $config->related_name,
@@ -432,12 +438,12 @@ class Conf_Model extends CI_Model {
                     'sf_hidden'  => ( $config->hidden ) ? 1 : 0,
                 );
 
-                if( $config->field_id )
-                {
-                    $data['sf_table'] = $table;
-                    $data['sf_field'] = $config->field_id;
-                } 
-                
+//                 if( $config->field_id )
+//                 {
+//                     $data['sf_table'] = $table;
+//                     $data['sf_field'] = $config->field_id;
+//                 } 
+               
                 $method = ( $config->field_id ) ? 'insert' : 'update';
                 
                 $test = $this->db->$method( 'sf_config', $data );
@@ -447,5 +453,18 @@ class Conf_Model extends CI_Model {
             }
         }
         return $success;
+    }
+    
+    function addTable($dataTable){
+    	$data = array(
+    			'sf_table'    => $dataTable,
+    			'sf_type'    => "default",
+    			'sf_desc'    => "",
+    			'sf_related' => "|",
+    			'sf_label'   => "",
+    			'sf_order'   => "1",
+    			'sf_hidden'  => 1,
+    	);
+    	$test = $this->db->insert( 'sf_config', $data );
     }
 }
